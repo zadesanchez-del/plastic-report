@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plastic in Our Waters — A Field Report</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;0,9..144,800;1,9..144,400&family=JetBrains+Mono:wght@400;500&family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --abyss: #04141c;
+  --deep: #0a2433;
+  --mid: #0f3a4f;
+  --tide: #1d5b73;
+  --foam: #e8efe9;
+  --sand: #d8c9a8;
+  --coral: #e85a3c;
+  --algae: #7fb069;
+  --warning: #f4c542;
+  --ink: #061018;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter Tight', sans-serif;
+  background: var(--abyss);
+  color: var(--foam);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ====== NOISE TEXTURE ====== */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+  opacity: 0.06;
+  z-index: 100;
+  mix-blend-mode: overlay;
+}
+
+/* ====== HERO ====== */
+.hero {
+  min-height: 100vh;
+  background:
+    radial-gradient(ellipse at 20% 0%, var(--mid) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 100%, var(--tide) 0%, transparent 60%),
+    linear-gradient(180deg, var(--deep) 0%, var(--abyss) 100%);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 2rem 3rem;
+  overflow: hidden;
+}
+
+.hero-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(232, 239, 233, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(232, 239, 233, 0.04) 1px, transparent 1px);
+  background-size: 80px 80px;
+}
+
+.hero-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  position: relative;
+  z-index: 2;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--sand);
+}
+
+.hero-top .meta { opacity: 0.7; }
+
+.hero-main {
+  position: relative;
+  z-index: 2;
+  margin: auto 0;
+  max-width: 1400px;
+  width: 100%;
+  align-self: center;
+}
+
+.hero-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--coral);
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.hero-eyebrow::before {
+  content: '';
+  width: 60px;
+  height: 1px;
+  background: var(--coral);
+}
+
+.hero h1 {
+  font-family: 'Fraunces', serif;
+  font-weight: 300;
+  font-size: clamp(3rem, 9vw, 8rem);
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  margin-bottom: 2rem;
+}
+
+.hero h1 em {
+  font-style: italic;
+  font-weight: 400;
+  color: var(--sand);
+}
+
+.hero-sub {
+  max-width: 600px;
+  font-size: 1.15rem;
+  color: rgba(232, 239, 233, 0.75);
+  font-weight: 300;
+  margin-bottom: 3rem;
+}
+
+.hero-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
+  border-top: 1px solid rgba(232, 239, 233, 0.15);
+  padding-top: 2rem;
+  max-width: 1100px;
+}
+
+.hero-stat .num {
+  font-family: 'Fraunces', serif;
+  font-size: 2.5rem;
+  font-weight: 400;
+  color: var(--foam);
+  display: block;
+  letter-spacing: -0.02em;
+}
+
+.hero-stat .label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--sand);
+  opacity: 0.7;
+  margin-top: 0.5rem;
+  display: block;
+}
+
+/* ====== FLOATING PARTICLES ====== */
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(232, 239, 233, 0.4);
+  pointer-events: none;
+  animation: drift 20s ease-in-out infinite;
+}
+
+@keyframes drift {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(30px, -50px); }
+}
+
+/* ====== NAVIGATION ====== */
+.toc {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(4, 20, 28, 0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(232, 239, 233, 0.1);
+  padding: 1rem 3rem;
+}
+
+.toc-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.toc-title { color: var(--sand); }
+
+.toc-links {
+  display: flex;
+  gap: 2rem;
+  list-style: none;
+}
+
+.toc-links a {
+  color: var(--foam);
+  text-decoration: none;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.toc-links a:hover { opacity: 1; color: var(--coral); }
+
+/* ====== SECTIONS ====== */
+section.part {
+  padding: 6rem 3rem;
+  position: relative;
+  border-bottom: 1px solid rgba(232, 239, 233, 0.08);
+}
+
+section.part:nth-child(odd) {
+  background: linear-gradient(180deg, var(--abyss) 0%, var(--deep) 100%);
+}
+
+section.part:nth-child(even) {
+  background: var(--abyss);
+}
+
+.part-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.part-header {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 3rem;
+  margin-bottom: 4rem;
+  align-items: end;
+  border-bottom: 1px solid rgba(232, 239, 233, 0.15);
+  padding-bottom: 2rem;
+}
+
+.part-number {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--coral);
+}
+
+.part-number .big {
+  display: block;
+  font-family: 'Fraunces', serif;
+  font-size: 5rem;
+  font-weight: 300;
+  color: var(--foam);
+  line-height: 1;
+  margin-top: 0.5rem;
+  letter-spacing: -0.04em;
+}
+
+.part-title {
+  font-family: 'Fraunces', serif;
+  font-weight: 400;
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+.part-title em {
+  font-style: italic;
+  color: var(--sand);
+}
+
+/* ====== CONTENT BLOCKS ====== */
+.block {
+  margin-bottom: 3rem;
+}
+
+.block-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--coral);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.block-label::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  background: var(--coral);
+  border-radius: 50%;
+}
+
+.block h3 {
+  font-family: 'Fraunces', serif;
+  font-weight: 400;
+  font-size: 1.6rem;
+  margin-bottom: 1rem;
+  letter-spacing: -0.01em;
+}
+
+.block p {
+  font-size: 1.05rem;
+  color: rgba(232, 239, 233, 0.85);
+  font-weight: 300;
+  margin-bottom: 1rem;
+  max-width: 75ch;
+}
+
+.block ul, .block ol {
+  list-style: none;
+  margin: 1rem 0;
+}
+
+.block ul li, .block ol li {
+  position: relative;
+  padding-left: 2rem;
+  margin-bottom: 0.85rem;
+  font-size: 1.02rem;
+  color: rgba(232, 239, 233, 0.85);
+  font-weight: 300;
+  max-width: 75ch;
+}
+
+.block ul li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.7rem;
+  width: 12px;
+  height: 1px;
+  background: var(--sand);
+}
+
+.block ol {
+  counter-reset: item;
+}
+
+.block ol li {
+  counter-increment: item;
+}
+
+.block ol li::before {
+  content: counter(item, decimal-leading-zero);
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--coral);
+  font-weight: 500;
+}
+
+strong {
+  color: var(--foam);
+  font-weight: 600;
+}
+
+em {
+  font-style: italic;
+  color: var(--sand);
+}
+
+/* ====== TWO-COL LAYOUT ====== */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+}
+
+@media (max-width: 768px) {
+  .two-col { grid-template-columns: 1fr; }
+}
+
+/* ====== EVIDENCE CARD ====== */
+.evidence-card {
+  background: rgba(15, 58, 79, 0.3);
+  border: 1px solid rgba(216, 201, 168, 0.2);
+  border-radius: 4px;
+  padding: 2rem;
+  position: relative;
+}
+
+.evidence-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--coral);
+}
+
+.evidence-card .card-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--coral);
+  margin-bottom: 0.5rem;
+}
+
+/* ====== DATA / TABLE ====== */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 2rem 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.9rem;
+}
+
+.data-table th {
+  text-align: left;
+  padding: 1rem 1.5rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--sand);
+  border-bottom: 1px solid rgba(216, 201, 168, 0.3);
+  font-weight: 500;
+}
+
+.data-table td {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid rgba(232, 239, 233, 0.08);
+  color: var(--foam);
+  font-weight: 400;
+}
+
+.data-table tr:hover td {
+  background: rgba(232, 90, 60, 0.05);
+}
+
+.data-table .bar-cell {
+  position: relative;
+  width: 40%;
+}
+
+.data-bar {
+  height: 8px;
+  background: linear-gradient(90deg, var(--coral) 0%, var(--warning) 100%);
+  border-radius: 1px;
+  transition: width 0.8s ease;
+}
+
+/* ====== BAR CHART ====== */
+.chart {
+  margin: 3rem 0;
+  padding: 2rem;
+  background: rgba(15, 58, 79, 0.2);
+  border: 1px solid rgba(232, 239, 233, 0.08);
+  border-radius: 4px;
+}
+
+.chart-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--sand);
+  margin-bottom: 2rem;
+}
+
+.chart-bar-row {
+  display: grid;
+  grid-template-columns: 200px 1fr 100px;
+  gap: 1.5rem;
+  align-items: center;
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+}
+
+.chart-bar-row .name {
+  font-weight: 400;
+  color: var(--foam);
+}
+
+.chart-bar-track {
+  height: 28px;
+  background: rgba(232, 239, 233, 0.05);
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+}
+
+.chart-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--coral) 0%, var(--warning) 100%);
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 0.75rem;
+  transition: width 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.chart-bar-row .value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  color: var(--sand);
+  text-align: right;
+}
+
+@media (max-width: 768px) {
+  .chart-bar-row {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+  .chart-bar-row .value { text-align: left; }
+}
+
+/* ====== DIAGRAM ====== */
+.diagram {
+  margin: 3rem 0;
+  padding: 3rem;
+  background: linear-gradient(180deg, rgba(29, 91, 115, 0.4), rgba(15, 58, 79, 0.2));
+  border: 1px solid rgba(232, 239, 233, 0.1);
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+}
+
+.diagram svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ====== PULL QUOTE ====== */
+.pullquote {
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+  line-height: 1.3;
+  color: var(--sand);
+  padding: 3rem 0;
+  border-top: 1px solid rgba(216, 201, 168, 0.3);
+  border-bottom: 1px solid rgba(216, 201, 168, 0.3);
+  margin: 3rem 0;
+  letter-spacing: -0.01em;
+  max-width: 850px;
+}
+
+.pullquote::before {
+  content: '"';
+  font-size: 4rem;
+  display: block;
+  line-height: 0.5;
+  color: var(--coral);
+  margin-bottom: 1rem;
+}
+
+/* ====== CER FINAL ====== */
+.cer-claim {
+  background: linear-gradient(135deg, rgba(232, 90, 60, 0.1), rgba(244, 197, 66, 0.05));
+  border: 1px solid rgba(232, 90, 60, 0.3);
+  border-radius: 4px;
+  padding: 2.5rem;
+  margin: 2rem 0;
+}
+
+.cer-claim .label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--coral);
+  margin-bottom: 1rem;
+  display: block;
+}
+
+.cer-claim p {
+  font-family: 'Fraunces', serif;
+  font-size: 1.4rem;
+  line-height: 1.4;
+  font-weight: 400;
+  color: var(--foam);
+  letter-spacing: -0.01em;
+  max-width: none;
+}
+
+/* ====== FOOTER ====== */
+footer {
+  background: var(--ink);
+  padding: 4rem 3rem 2rem;
+  text-align: center;
+}
+
+footer .footer-mark {
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-size: 1.5rem;
+  color: var(--sand);
+  margin-bottom: 1rem;
+}
+
+footer .footer-meta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(232, 239, 233, 0.4);
+}
+
+/* ====== ANIMATIONS ====== */
+.fade-in {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.fade-in.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ====== RESPONSIVE ====== */
+@media (max-width: 768px) {
+  .hero { padding: 2rem 1.5rem; }
+  .hero-stats { grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+  .toc { padding: 1rem 1.5rem; }
+  .toc-links { gap: 1rem; font-size: 0.65rem; }
+  section.part { padding: 4rem 1.5rem; }
+  .part-header {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  .part-number .big { font-size: 3.5rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- ====== HERO ====== -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="particle" style="width:4px;height:4px;top:20%;left:15%;animation-delay:0s;"></div>
+  <div class="particle" style="width:6px;height:6px;top:60%;left:80%;animation-delay:3s;"></div>
+  <div class="particle" style="width:3px;height:3px;top:40%;left:50%;animation-delay:6s;"></div>
+  <div class="particle" style="width:5px;height:5px;top:75%;left:25%;animation-delay:9s;"></div>
+  <div class="particle" style="width:4px;height:4px;top:30%;left:70%;animation-delay:12s;"></div>
+
+  <div class="hero-top">
+    <span>A Field Report on Aquatic Systems</span>
+    <span class="meta">Vol. 01 / Six Parts</span>
+  </div>
+
+  <div class="hero-main">
+    <div class="hero-eyebrow">Human Impact Investigation</div>
+    <h1>Plastic in <em>our</em><br>waters.</h1>
+    <p class="hero-sub">Eight million tons enter the ocean every year. It travels through every current, every food web, every body — including ours. This is what the evidence shows, and what we can still do about it.</p>
+
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <span class="num">8M</span>
+        <span class="label">Tons / Year</span>
+      </div>
+      <div class="hero-stat">
+        <span class="num">5</span>
+        <span class="label">Ocean Gyres</span>
+      </div>
+      <div class="hero-stat">
+        <span class="num">6×</span>
+        <span class="label">Plastic vs Plankton</span>
+      </div>
+      <div class="hero-stat">
+        <span class="num">400+</span>
+        <span class="label">Years to Degrade</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== TOC ====== -->
+<nav class="toc">
+  <div class="toc-inner">
+    <span class="toc-title">— Index</span>
+    <ul class="toc-links">
+      <li><a href="#part1">01 Evidence</a></li>
+      <li><a href="#part2">02 Analysis</a></li>
+      <li><a href="#part3">03 Data</a></li>
+      <li><a href="#part4">04 Case</a></li>
+      <li><a href="#part5">05 Solution</a></li>
+      <li><a href="#part6">06 Argument</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ====== PART 1 ====== -->
+<section class="part" id="part1">
+  <div class="part-inner">
+    <div class="part-header">
+      <div class="part-number">
+        Part
+        <span class="big">01</span>
+      </div>
+      <h2 class="part-title">Film <em>Evidence</em><br>from the field.</h2>
+    </div>
+
+    <div class="block">
+      <div class="block-label">Three Examples — Human Impact</div>
+      <ol>
+        <li>Approximately <strong>8 million tons</strong> of plastic dumped into the ocean every year, mostly from rivers carrying trash from cities.</li>
+        <li>Single-use plastic packaging — bottles, bags, wrappers — piling up on beaches like Smith Island in the Philippines.</li>
+        <li>Lost fishing nets <em>("ghost nets")</em> that keep trapping and killing fish, turtles, and whales long after they're abandoned.</li>
+      </ol>
+    </div>
+
+    <div class="two-col">
+      <div class="block">
+        <div class="block-label">Two Scientific Processes</div>
+        <h3>Bioaccumulation</h3>
+        <p>Toxins from plastic move up the food chain: plankton → small fish → big fish → humans. The poison concentrates at every step.</p>
+        <h3 style="margin-top:1.5rem;">Ocean Gyre Circulation</h3>
+        <p>Currents trap floating plastic in five massive rotating zones, including the infamous Great Pacific Garbage Patch.</p>
+      </div>
+
+      <div class="block">
+        <div class="block-label">Two Abiotic Factors Affected</div>
+        <h3>Dissolved Oxygen</h3>
+        <p>Drops as microbes consuming plastic-related debris use up the available oxygen in the water column.</p>
+        <h3 style="margin-top:1.5rem;">Light Penetration</h3>
+        <p>Falls when floating plastic blocks sunlight from reaching deeper water where producers depend on it.</p>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-label">Two Pieces of Evidence</div>
+      <div class="two-col">
+        <div class="evidence-card">
+          <div class="card-tag">Quantitative</div>
+          <p>Researchers found <strong>6× more plastic than plankton by weight</strong> in some North Pacific Gyre water samples.</p>
+        </div>
+        <div class="evidence-card">
+          <div class="card-tag">Observational</div>
+          <p>Dead seabirds — especially albatross chicks on Midway Atoll — had stomachs <strong>packed with bottle caps and plastic fragments</strong>.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-label">How Plastic Enters Aquatic Systems</div>
+      <p>Mostly through rivers carrying trash from land, plus dumping from ships, lost fishing gear, and microfibers shed from washing synthetic clothes.</p>
+    </div>
+
+    <div class="block">
+      <div class="block-label">Organisms Most Affected</div>
+      <p><strong>Filter feeders</strong> like whales and oysters; <strong>surface feeders</strong> like seabirds and turtles; and <strong>apex predators</strong> like tuna and sharks. They either swallow plastic by accident or accumulate concentrated toxins from prey lower in the food chain.</p>
+    </div>
+
+    <div class="pullquote">
+      Every aquatic ecosystem shown — open ocean, coral reefs, rivers, even Arctic ice — has plastic in it. No ecosystem is plastic-free anymore.
+    </div>
+  </div>
+</section>
+
+<!-- ====== PART 2 ====== -->
+<section class="part" id="part2">
+  <div class="part-inner">
+    <div class="part-header">
+      <div class="part-number">
+        Part
+        <span class="big">02</span>
+      </div>
+      <h2 class="part-title">Scientific <em>Analysis</em>.</h2>
+    </div>
+
+    <div class="block">
+      <div class="block-label">Effect on Food Webs & Energy Flow</div>
+      <p>Plastic blocks sunlight, so phytoplankton — the producers — make less energy through photosynthesis. That means less food at the base of the web, and every level above receives less energy in turn.</p>
+    </div>
+
+    <div class="two-col">
+      <div class="block">
+        <div class="block-label">Producers</div>
+        <p>Less photosynthesis as light penetration drops.</p>
+      </div>
+      <div class="block">
+        <div class="block-label">Consumers</div>
+        <p>Eat plastic, feel full but starve; toxins build up in their bodies.</p>
+      </div>
+      <div class="block">
+        <div class="block-label">Decomposers</div>
+        <p>Can't break plastic down — it doesn't get recycled into nutrients like normal organic matter.</p>
+      </div>
+      <div class="block">
+        <div class="block-label">Carbon Cycle</div>
+        <p>Plastic is made from oil. Production releases buried CO₂ — about <strong>850 million tons</strong> globally per year.</p>
+      </div>
+      <div class="block">
+        <div class="block-label">Nitrogen Cycle</div>
+        <p>The "plastisphere" — bacteria living on plastic surfaces — disrupts how nitrogen is normally cycled in seawater.</p>
+      </div>
+      <div class="block">
+        <div class="block-label">Temperature</div>
+        <p>Dark plastic absorbs sunlight and warms surrounding water, intensifying heating in shallow areas like reefs.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== PART 3 ====== -->
+<section class="part" id="part3">
+  <div class="part-inner">
+    <div class="part-header">
+      <div class="part-number">
+        Part
+        <span class="big">03</span>
+      </div>
+      <h2 class="part-title">Data <em>Analysis</em>.</h2>
+    </div>
+
+    <div class="block">
+      <div class="block-label">Dataset — Microplastic Particles per km²</div>
+      <p>Density of microplastic particles measured across major ocean regions.</p>
+    </div>
+
+    <div class="chart">
+      <div class="chart-title">— Particles per square kilometer / by region</div>
+
+      <div class="chart-bar-row">
+        <div class="name">North Pacific Gyre</div>
+        <div class="chart-bar-track"><div class="chart-bar-fill" style="width:100%;"></div></div>
+        <div class="value">1,800,000</div>
+      </div>
+      <div class="chart-bar-row">
+        <div class="name">Mediterranean Sea</div>
+        <div class="chart-bar-track"><div class="chart-bar-fill" style="width:69.4%;"></div></div>
+        <div class="value">1,250,000</div>
+      </div>
+      <div class="chart-bar-row">
+        <div class="name">North Atlantic Gyre</div>
+        <div class="chart-bar-track"><div class="chart-bar-fill" style="width:51.7%;"></div></div>
+        <div class="value">930,000</div>
+      </div>
+      <div class="chart-bar-row">
+        <div class="name">Indian Ocean Gyre</div>
+        <div class="chart-bar-track"><div class="chart-bar-fill" style="width:42.2%;"></div></div>
+        <div class="value">760,000</div>
+      </div>
+      <div class="chart-bar-row">
+        <div class="name">South Pacific Gyre</div>
+        <div class="chart-bar-track"><div class="chart-bar-fill" style="width:27.2%;"></div></div>
+        <div class="value">490,000</div>
+      </div>
+      <div class="chart-bar-row">
+        <div class="name">South Atlantic Gyre</div>
+        <div class="chart-bar-track"><div class="chart-bar-fill" style="width:22.8%;"></div></div>
+        <div class="value">410,000</div>
+      </div>
+      <div class="chart-bar-row">
+        <div class="name">Arctic Ocean</div>
+        <div class="chart-bar-track"><div class="chart-bar-fill" style="width:5.3%;"></div></div>
+        <div class="value">95,000</div>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-label">Trend Explanation</div>
+      <p>Northern Hemisphere oceans hold dramatically more microplastic than Southern Hemisphere ones — a direct consequence of population distribution. Most of the world's people live north of the equator, so most plastic waste enters there. Ocean currents then trap that plastic in spinning gyres.</p>
+      <p>The Mediterranean is exceptionally polluted because it's nearly enclosed: plastic enters but cannot escape. Even the Arctic now carries plastic, ferried in by currents and frozen into ice.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ====== PART 4 ====== -->
+<section class="part" id="part4">
+  <div class="part-inner">
+    <div class="part-header">
+      <div class="part-number">
+        Part
+        <span class="big">04</span>
+      </div>
+      <h2 class="part-title">Case Study: <em>Microplastics</em>.</h2>
+    </div>
+
+    <div class="block">
+      <div class="block-label">Cause — Human Activity</div>
+      <p>Microplastics come from two sources. <strong>Primary microplastics</strong> are manufactured small on purpose — microbeads in face wash, synthetic clothing fibers shed in laundry. <strong>Secondary microplastics</strong> are larger plastics broken down by sun and waves. A single load of synthetic laundry can shed <strong>over 700,000 microfibers</strong>.</p>
+    </div>
+
+    <div class="two-col">
+      <div class="block">
+        <div class="block-label">Short-Term Effects</div>
+        <ul>
+          <li>Zooplankton and small fish eat them and starve, feeling full on plastic.</li>
+          <li>Sharp fragments injure internal organs.</li>
+          <li>Toxic chemicals like BPA leach into the water and into animal tissue.</li>
+        </ul>
+      </div>
+      <div class="block">
+        <div class="block-label">Long-Term Effects</div>
+        <ul>
+          <li>Toxins biomagnify as they move up the food chain.</li>
+          <li>Endocrine disruptors interfere with hormones, harming reproduction and development.</li>
+          <li>Microplastics now found in human <strong>blood, lungs, and placentas</strong>.</li>
+          <li>Plastic doesn't biodegrade — pollution lasts <strong>400+ years</strong>.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-label">Evidence from the Film</div>
+      <div class="evidence-card" style="margin-bottom:1rem;">
+        <div class="card-tag">Sample Data</div>
+        <p>Trawl samples in the North Pacific Gyre had <strong>6× more plastic than plankton by weight</strong>.</p>
+      </div>
+      <div class="evidence-card" style="margin-bottom:1rem;">
+        <div class="card-tag">Market Survey</div>
+        <p>Researchers cut open fish from regular fish markets and found <strong>microplastics inside</strong>.</p>
+      </div>
+      <div class="evidence-card">
+        <div class="card-tag">Chemistry</div>
+        <p>Plastic absorbs toxic chemicals from seawater at concentrations <strong>1 million times higher</strong> than the surrounding water.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== PART 5 ====== -->
+<section class="part" id="part5">
+  <div class="part-inner">
+    <div class="part-header">
+      <div class="part-number">
+        Part
+        <span class="big">05</span>
+      </div>
+      <h2 class="part-title">Engineering <em>a Solution</em>.</h2>
+    </div>
+
+    <div class="block">
+      <div class="block-label">Proposal</div>
+      <h3 style="font-size:2rem;">River Interception System<br>+ Biodegradable Plastic Mandate</h3>
+    </div>
+
+    <div class="block">
+      <div class="block-label">How It Works</div>
+      <ol>
+        <li>A <strong>V-shaped floating barrier (boom)</strong> stretches across a river. The current pushes plastic toward the center.</li>
+        <li>At the center, a <strong>solar-powered conveyor belt</strong> lifts plastic out of the water onto land.</li>
+        <li>An on-shore <strong>sorting facility</strong> separates plastics by type and recycles them. Non-recyclable material is converted to fuel.</li>
+        <li>A <strong>government policy</strong> requires companies to transition to biodegradable plastics like PHA or PLA within 5 years.</li>
+      </ol>
+    </div>
+
+    <div class="diagram">
+      <svg viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="water" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#1d5b73" stop-opacity="0.6"/>
+            <stop offset="100%" stop-color="#0a2433" stop-opacity="0.9"/>
+          </linearGradient>
+          <linearGradient id="land" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#d8c9a8" stop-opacity="0.4"/>
+            <stop offset="100%" stop-color="#d8c9a8" stop-opacity="0.1"/>
+          </linearGradient>
+        </defs>
+
+        <!-- River banks -->
+        <rect x="0" y="0" width="800" height="80" fill="url(#land)"/>
+        <rect x="0" y="320" width="800" height="80" fill="url(#land)"/>
+
+        <!-- River -->
+        <rect x="0" y="80" width="800" height="240" fill="url(#water)"/>
+
+        <!-- Flow arrows -->
+        <g stroke="#e8efe9" stroke-opacity="0.3" stroke-width="1" fill="none">
+          <path d="M 30 130 L 80 130" marker-end="url(#arrow)"/>
+          <path d="M 30 200 L 80 200" marker-end="url(#arrow)"/>
+          <path d="M 30 270 L 80 270" marker-end="url(#arrow)"/>
+        </g>
+        <defs>
+          <marker id="arrow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+            <path d="M0,0 L6,3 L0,6" fill="#e8efe9" fill-opacity="0.3"/>
+          </marker>
+        </defs>
+
+        <!-- Plastic debris floating -->
+        <circle cx="120" cy="140" r="4" fill="#e85a3c"/>
+        <circle cx="160" cy="220" r="3" fill="#f4c542"/>
+        <rect x="100" y="260" width="6" height="6" fill="#e85a3c" transform="rotate(20 103 263)"/>
+        <circle cx="200" cy="180" r="3" fill="#f4c542"/>
+        <rect x="180" y="240" width="5" height="5" fill="#e85a3c"/>
+
+        <!-- V-shaped boom -->
+        <path d="M 250 90 L 450 200 L 250 310" stroke="#e8efe9" stroke-width="3" fill="none"/>
+        <circle cx="250" cy="90" r="6" fill="#e8efe9"/>
+        <circle cx="250" cy="310" r="6" fill="#e8efe9"/>
+
+        <!-- Boom anchors to bank -->
+        <line x1="250" y1="90" x2="250" y2="60" stroke="#d8c9a8" stroke-width="2" stroke-dasharray="3,2"/>
+        <line x1="250" y1="310" x2="250" y2="340" stroke="#d8c9a8" stroke-width="2" stroke-dasharray="3,2"/>
+
+        <!-- Captured plastic at center -->
+        <circle cx="430" cy="195" r="3" fill="#e85a3c"/>
+        <circle cx="440" cy="205" r="3" fill="#f4c542"/>
+        <rect x="425" y="200" width="5" height="5" fill="#e85a3c"/>
+        <circle cx="445" cy="195" r="2" fill="#f4c542"/>
+
+        <!-- Conveyor belt -->
+        <rect x="450" y="180" width="180" height="40" fill="#0a2433" stroke="#d8c9a8" stroke-width="1.5"/>
+        <line x1="470" y1="190" x2="475" y2="190" stroke="#d8c9a8" stroke-width="1"/>
+        <line x1="490" y1="190" x2="495" y2="190" stroke="#d8c9a8" stroke-width="1"/>
+        <line x1="510" y1="190" x2="515" y2="190" stroke="#d8c9a8" stroke-width="1"/>
+        <line x1="530" y1="190" x2="535" y2="190" stroke="#d8c9a8" stroke-width="1"/>
+        <line x1="550" y1="190" x2="555" y2="190" stroke="#d8c9a8" stroke-width="1"/>
+
+        <!-- Solar panel above conveyor -->
+        <rect x="500" y="120" width="80" height="30" fill="#0f3a4f" stroke="#7fb069" stroke-width="1.5"/>
+        <line x1="520" y1="120" x2="520" y2="150" stroke="#7fb069" stroke-width="0.5"/>
+        <line x1="540" y1="120" x2="540" y2="150" stroke="#7fb069" stroke-width="0.5"/>
+        <line x1="560" y1="120" x2="560" y2="150" stroke="#7fb069" stroke-width="0.5"/>
+        <line x1="540" y1="150" x2="540" y2="180" stroke="#7fb069" stroke-width="1.5"/>
+
+        <!-- Sun rays on solar panel -->
+        <g stroke="#f4c542" stroke-width="1" stroke-linecap="round">
+          <line x1="540" y1="100" x2="540" y2="110"/>
+          <line x1="510" y1="105" x2="515" y2="112"/>
+          <line x1="570" y1="105" x2="565" y2="112"/>
+        </g>
+
+        <!-- Sorting facility -->
+        <rect x="650" y="300" width="120" height="40" fill="#0a2433" stroke="#e8efe9" stroke-width="1.5"/>
+        <rect x="660" y="285" width="20" height="15" fill="#0a2433" stroke="#e8efe9" stroke-width="1"/>
+        <rect x="690" y="285" width="20" height="15" fill="#0a2433" stroke="#e8efe9" stroke-width="1"/>
+        <rect x="720" y="285" width="20" height="15" fill="#0a2433" stroke="#e8efe9" stroke-width="1"/>
+
+        <!-- Conveyor to facility -->
+        <line x1="630" y1="200" x2="700" y2="300" stroke="#d8c9a8" stroke-width="2" stroke-dasharray="4,3"/>
+
+        <!-- Labels -->
+        <g font-family="JetBrains Mono, monospace" font-size="10" fill="#d8c9a8" letter-spacing="1">
+          <text x="40" y="30">[01] RIVER FLOW →</text>
+          <text x="270" y="50">[02] V-BOOM</text>
+          <text x="475" y="115">[03] SOLAR ARRAY</text>
+          <text x="465" y="245">[04] CONVEYOR</text>
+          <text x="650" y="370">[05] SORTING FACILITY</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="two-col">
+      <div class="block">
+        <div class="block-label">Benefits</div>
+        <ul>
+          <li>Catches plastic in rivers before it reaches the ocean — rivers carry <strong>80% of ocean plastic</strong>.</li>
+          <li>Solar-powered, so no fossil fuels burned to operate.</li>
+          <li>Fish swim freely under the boom — no harm to wildlife.</li>
+          <li><strong>10× cheaper</strong> per ton than open-ocean cleanup.</li>
+          <li>Combines technology AND policy to attack both ends.</li>
+        </ul>
+      </div>
+      <div class="block">
+        <div class="block-label">Limitations</div>
+        <ul>
+          <li>Only catches floating plastic — sunken and dissolved microplastics escape.</li>
+          <li>Requires maintenance, especially after storms.</li>
+          <li>Bioplastics still need composting facilities to fully break down.</li>
+          <li>Hard to enforce in countries with weak environmental law.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-label">Cost vs. Environmental Impact</div>
+      <div class="two-col">
+        <div class="evidence-card">
+          <div class="card-tag">Cost</div>
+          <p>~<strong>$1 million per system</strong> + $120,000/year to operate</p>
+        </div>
+        <div class="evidence-card">
+          <div class="card-tag">Capture</div>
+          <p><strong>50–100 tons</strong> of plastic per system per year</p>
+        </div>
+      </div>
+      <p style="margin-top:1.5rem;">Pays for itself within <strong>7–10 years</strong> through recycled plastic sales and reduced downstream cleanup costs.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ====== PART 6 ====== -->
+<section class="part" id="part6">
+  <div class="part-inner">
+    <div class="part-header">
+      <div class="part-number">
+        Part
+        <span class="big">06</span>
+      </div>
+      <h2 class="part-title">A <em>CER</em><br>argument.</h2>
+    </div>
+
+    <div class="block">
+      <div class="block-label">Prompt</div>
+      <p style="font-family:'Fraunces', serif; font-style:italic; font-size:1.3rem; color:var(--sand);">What is the most effective way to reduce plastic pollution in aquatic ecosystems?</p>
+    </div>
+
+    <div class="cer-claim">
+      <span class="label">— Claim</span>
+      <p>The most effective way to reduce plastic pollution is a combined upstream approach: <em>intercept plastic in rivers</em> before it reaches the ocean, <em>and</em> require biodegradable alternatives through policy.</p>
+    </div>
+
+    <div class="block">
+      <div class="block-label">Evidence</div>
+      <div class="evidence-card" style="margin-bottom:1rem;">
+        <div class="card-tag">From the Film</div>
+        <p>About 8 million tons of plastic enter the ocean each year, mostly through rivers, and once it's there, it breaks into microplastics that are nearly impossible to remove.</p>
+      </div>
+      <div class="evidence-card" style="margin-bottom:1rem;">
+        <div class="card-tag">From Research</div>
+        <p>Just <strong>1,000 rivers</strong> carry 80% of all ocean plastic — cleanup at those rivers stops most of the problem at the source, at <strong>1/10 the cost</strong> of ocean cleanup.</p>
+      </div>
+      <div class="evidence-card">
+        <div class="card-tag">Scientific Concept</div>
+        <p>Toxins from plastic biomagnify ~<strong>10×</strong> at each level of the food chain. Every piece prevented from entering the ocean stops thousands of toxic exposures upstream in the food web.</p>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-label">Reasoning</div>
+      <p>Prevention is far more effective than cleanup. Once plastic is in the ocean, currents disperse it across millions of square miles and break it into pieces that last 400+ years. Stopping plastic at rivers — narrow chokepoints — is much easier than chasing it across whole oceans.</p>
+      <p>Biodegradable plastics like PHA actually break down into CO₂, water, and biomass, so they re-enter natural cycles instead of polluting forever. Technology alone won't fix this because we keep producing more plastic. Policy alone won't fix existing waste. Combined, they attack both source and impact — protecting the food web, water quality, and biogeochemical cycles all at once.</p>
+    </div>
+
+    <div class="pullquote">
+      No ecosystem is plastic-free anymore. But every ecosystem can still be saved — if we stop the plastic before it ever reaches the water.
+    </div>
+  </div>
+</section>
+
+<!-- ====== FOOTER ====== -->
+<footer>
+  <div class="footer-mark">— Plastic in our waters —</div>
+  <div class="footer-meta">A Field Report · Six Parts · End of Document</div>
+</footer>
+
+<script>
+  // Fade-in on scroll
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) entry.target.classList.add('visible');
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.block, .evidence-card, .pullquote, .cer-claim, .diagram, .chart').forEach(el => {
+    el.classList.add('fade-in');
+    observer.observe(el);
+  });
+
+  // Animate bars on view
+  const barObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const bars = entry.target.querySelectorAll('.chart-bar-fill');
+        bars.forEach(bar => {
+          const w = bar.style.width;
+          bar.style.width = '0%';
+          setTimeout(() => { bar.style.width = w; }, 100);
+        });
+        barObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.3 });
+
+  document.querySelectorAll('.chart').forEach(c => barObserver.observe(c));
+</script>
+
+</body>
+</html>
